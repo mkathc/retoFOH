@@ -57,9 +57,8 @@ class CandyStoreViewModel(
     }
 
     fun addProduct(product: CandyStoreModel) {
-        updateState(StoreUiState.Loading)
         _addProduct.value.addProduct(product)
-        updateState(StoreUiState.Success(resultList))
+        updateState(StoreUiState.Loading)
     }
 
     fun isLoggedUser() {
