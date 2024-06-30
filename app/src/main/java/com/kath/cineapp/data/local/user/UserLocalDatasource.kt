@@ -7,4 +7,6 @@ interface UserLocalDatasource {
 
     suspend fun getUser(): Result<UserEntity>
     suspend fun saveUser(user:UserEntity): Result<Boolean>
+    suspend fun isLogged(): Result<Boolean>
+
 }

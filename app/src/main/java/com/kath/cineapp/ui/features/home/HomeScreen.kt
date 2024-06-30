@@ -74,13 +74,14 @@ fun HomeScreen(onTapMovie: () -> Unit, viewModel: HomeViewModel = koinViewModel(
             }
 
             is HomeUiState.Success -> {
+                val result = (state.value as HomeUiState.Success)
                 Column(
                     modifier = Modifier
                         .padding(it)
                         .fillMaxSize()
                 ) {
                     val pagerState = rememberPagerState(pageCount = {
-                        (state.value as HomeUiState.Success).premieresList.size
+                        result.premieresList.size
                     })
 
                     HorizontalPager(
@@ -92,7 +93,7 @@ fun HomeScreen(onTapMovie: () -> Unit, viewModel: HomeViewModel = koinViewModel(
                         }) {
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data((state.value as HomeUiState.Success).premieresList[index].image)
+                                    .data(result.premieresList[index].image)
                                     .build(),
                                 contentDescription = "Image",
                                 contentScale = ContentScale.Crop,
@@ -103,7 +104,7 @@ fun HomeScreen(onTapMovie: () -> Unit, viewModel: HomeViewModel = koinViewModel(
                             )
 
                             Text(
-                                text = (state.value as HomeUiState.Success).premieresList[index].description,
+                                text = result.premieresList[index].description,
                                 modifier = Modifier
                                     .padding(25.dp)
                                     .align(Alignment.BottomStart),

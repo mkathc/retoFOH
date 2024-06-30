@@ -48,20 +48,20 @@ class MainActivity : ComponentActivity() {
                 selectedIcon = Icons.Filled.Home,
                 unselectedIcon = Icons.Outlined.Home
             )
-            val candyStoreTab = TabBarItem(
-                title = "Candy Store",
-                route = Screen.CandyStore.route,
-                selectedIcon = Icons.Filled.Store,
-                unselectedIcon = Icons.Outlined.Store,
-            )
             val loginTab = TabBarItem(
                 title = "Login",
                 route = Screen.Login.route,
                 selectedIcon = Icons.Filled.Login,
                 unselectedIcon = Icons.Outlined.Login
             )
+            val candyStoreTab = TabBarItem(
+                title = "Candy Store",
+                route = Screen.CandyStore.route,
+                selectedIcon = Icons.Filled.Store,
+                unselectedIcon = Icons.Outlined.Store
+            )
 
-            val tabBarItems = listOf(homeTab, candyStoreTab, loginTab)
+            val tabBarItems = listOf(homeTab, loginTab, candyStoreTab)
 
             CineAppTheme {
                 val navController = rememberNavController()

@@ -25,6 +25,7 @@ import com.kath.cineapp.domain.repository.PremieresRepository
 import com.kath.cineapp.domain.repository.UserRepository
 import com.kath.cineapp.domain.usecase.GetCandyStoreUseCase
 import com.kath.cineapp.domain.usecase.GetPremieresUseCase
+import com.kath.cineapp.domain.usecase.GetUserIsLoggedUseCase
 import com.kath.cineapp.domain.usecase.GetUserUseCase
 import com.kath.cineapp.domain.usecase.SaveUserUseCase
 import com.kath.cineapp.domain.usecase.SendCompleteUseCase
@@ -38,6 +39,7 @@ import com.kath.cineapp.ui.features.home.HomeViewModel
 import com.kath.cineapp.ui.features.candystore.CandyStoreViewModel
 import com.kath.cineapp.ui.features.login.LoginViewModel
 import com.kath.cineapp.ui.features.payment.PaymentViewModel
+import com.kath.cineapp.ui.main.MainViewModel
 import okhttp3.logging.HttpLoggingInterceptor
 
 import org.koin.android.ext.koin.androidContext
@@ -74,11 +76,13 @@ val appModule = module {
     single<CompleteRemoteDatasource> { CompleteRemoteDatasourceImpl(get()) }
     single<CompleteRepository> { CompleteRepositoryImpl(get()) }
     single<SendCompleteUseCase> { SendCompleteUseCase(get()) }
+    single<GetUserIsLoggedUseCase> { GetUserIsLoggedUseCase(get()) }
 
     viewModelOf(::HomeViewModel)
     viewModelOf(::CandyStoreViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::PaymentViewModel)
+    viewModelOf(::MainViewModel)
 }
 
 

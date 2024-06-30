@@ -36,6 +36,10 @@ class UserRepositoryImpl(
         )
     }
 
+    override suspend fun isLogged(): Result<Boolean> {
+        return userLocalDatasource.isLogged()
+    }
+
     private fun User.parseToEntity(): UserEntity {
         return UserEntity(
             name = name,

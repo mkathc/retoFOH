@@ -18,3 +18,5 @@ gradle.properties
 .externalNativeBuild
 .cxx
 local.properties
+
+.idea/vcs.xml

@@ -14,6 +14,5 @@ data class CardFormFields(
     val cvvCode: UiField = UiField(""),
     val expirationDate: UiField = UiField(""),
     val expirationDateTimestamp: Long? = null,
-    val email: UiField = UiField(""),
     val address: UiField = UiField("")
 )

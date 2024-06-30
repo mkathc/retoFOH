@@ -154,7 +154,7 @@ class PaymentViewModel(
         }
     }
 
-    fun sendPayment() {
+    fun sendPayment(user: UserModel) {
 
         val model = PaymentModel(
             cardNumber = currentState().formFields.cardNumber.value,
@@ -163,7 +163,7 @@ class PaymentViewModel(
             documentNumber = currentState().formFields.documentNumber.value,
             documentType = currentState().formFields.documentType.value,
             cvvCode = currentState().formFields.cvvCode.value,
-            email = currentState().formFields.email.value,
+            email = user.email,
             address = currentState().formFields.address.value
         )
 
@@ -172,8 +172,8 @@ class PaymentViewModel(
                 Log.e("sendPaymentUseCase", "onSuccess")
                 sendCompleteUseCase.invoke(
                     Complete(
-                        name = user.value.name,
-                        mail = user.value.email,
+                        name = user.name,
+                        mail = user.email,
                         dni = currentState().formFields.documentNumber.value,
                         operationDate = it.operationDate
                     )

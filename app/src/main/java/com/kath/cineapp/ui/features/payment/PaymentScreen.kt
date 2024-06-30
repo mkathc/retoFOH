@@ -69,12 +69,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kath.cineapp.ui.main.MainViewModel
 import java.util.Locale
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel()) {
+fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel(), mainViewModel: MainViewModel = koinViewModel()) {
 
     val focusManager = LocalFocusManager.current
 
@@ -233,12 +234,8 @@ fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel()) {
 
             PrimaryButton(
                 onClick = {
-                    viewModel.getUser()
-                    val formField = viewModel.currentState().formFields.copy(
-                        email = UiField(value = viewModel.user.value.email)
-                    )
-                    viewModel.updateFields(formField)
-                    viewModel.sendPayment()
+                    mainViewModel.getUser()
+                    viewModel.sendPayment(mainViewModel.currentUser())
                 },
                 modifier = Modifier
                     .fillMaxWidth()

@@ -29,23 +29,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.kath.cineapp.ui.main.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CandyStoreScreen(onTapContinue: () -> Unit, viewModel: CandyStoreViewModel = koinViewModel()) {
+fun CandyStoreScreen(
+    onTapContinue: () -> Unit,
+    viewModel: CandyStoreViewModel = koinViewModel()
+) {
     val state = viewModel.state.collectAsState()
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
-            Text(
-                text = "Compra tus adicionales",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                textAlign = TextAlign.Center,
-                fontSize = 35.sp,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            if (state.value is StoreUiState.Success) {
+                Text(
+                    text = "Compra tus adicionales",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 35.sp,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
         },
         bottomBar = {
             if (state.value is StoreUiState.Success) {
@@ -83,6 +90,8 @@ fun CandyStoreScreen(onTapContinue: () -> Unit, viewModel: CandyStoreViewModel =
             }
 
             StoreUiState.Loading -> {
+                viewModel.getCandyStore()
+
                 Column(
                     modifier = Modifier
                         .padding(it)
@@ -141,6 +150,22 @@ fun CandyStoreScreen(onTapContinue: () -> Unit, viewModel: CandyStoreViewModel =
 
                         }
                     }
+                }
+            }
+
+            StoreUiState.IsNotLogged -> {
+                Column(
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Usted no está logueado",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
