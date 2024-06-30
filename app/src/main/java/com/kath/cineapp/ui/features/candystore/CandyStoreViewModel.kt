@@ -1,10 +1,12 @@
 package com.kath.cineapp.ui.features.candystore
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kath.cineapp.domain.usecase.GetCandyStoreUseCase
 import com.kath.cineapp.domain.usecase.GetUserIsLoggedUseCase
+import com.kath.cineapp.ui.features.home.HomeUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,21 +24,21 @@ class CandyStoreViewModel(
     private val _state: MutableStateFlow<StoreUiState> = MutableStateFlow(StoreUiState.IsNotLogged)
     val state: StateFlow<StoreUiState> = _state.asStateFlow()
 
-    private val _productList: MutableStateFlow<MutableList<CandyStoreModel>> = MutableStateFlow(
-        mutableListOf()
-    )
-    val productList: StateFlow<MutableList<CandyStoreModel>> = _productList.asStateFlow()
-
     private val _isLogged: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLogged: StateFlow<Boolean> = _isLogged.asStateFlow()
 
-    // Function to get the current state
-    fun currentState(): StoreUiState = _state.value
+    private val _addProduct: MutableStateFlow<AddProductUiState> = MutableStateFlow(AddProductUiState())
+    val addProduct: StateFlow<AddProductUiState> get() = _addProduct
+
+    private var resultList: List<CandyStoreModel> = mutableListOf()
 
     // Function to update the state
     fun updateState(newState: StoreUiState) {
         _state.value = newState
     }
+
+    fun currentProductsState() = _addProduct.value
+
 
     init {
         isLoggedUser()
@@ -46,7 +48,8 @@ class CandyStoreViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val result = getCandyStoreUseCase()
             if (result.isSuccess) {
-                updateState(StoreUiState.Success(result.getOrNull() ?: mutableListOf()))
+                resultList = result.getOrNull()?: mutableListOf()
+                updateState(StoreUiState.Success(resultList))
             } else {
                 updateState(StoreUiState.Error)
             }
@@ -54,26 +57,9 @@ class CandyStoreViewModel(
     }
 
     fun addProduct(product: CandyStoreModel) {
-        _productList.value.add(product)
-        val stateSuccess = state.value as StoreUiState.Success
-        val list = stateSuccess.storeList
-        list.map {
-            if (it == product) {
-                it.copy(count = it.count++)
-            }else{
-                it
-            }
-        }
-        updateState(StoreUiState.Success(list))
-    }
-
-    fun sendToPayment():Double {
-        var sum = 0.0
-        productList.value.forEach {
-            sum += it.getDoublePrice()
-        }
-        Log.e("Prices", sum.toString())
-        return sum
+        updateState(StoreUiState.Loading)
+        _addProduct.value.addProduct(product)
+        updateState(StoreUiState.Success(resultList))
     }
 
     fun isLoggedUser() {

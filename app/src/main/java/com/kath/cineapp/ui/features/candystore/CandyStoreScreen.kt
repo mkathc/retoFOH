@@ -23,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +46,7 @@ fun CandyStoreScreen(
     viewModel: CandyStoreViewModel = koinViewModel()
 ) {
     val state = viewModel.state.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.isLoggedUser()
     }
@@ -63,24 +67,41 @@ fun CandyStoreScreen(
         },
         bottomBar = {
             if (state.value is StoreUiState.Success) {
-                Button(
-                    onClick = {
-                        onTapContinue(viewModel.sendToPayment())
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .imePadding()
-                        .then(Modifier.wrapContentHeight()),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                    shape = RoundedCornerShape(30.dp),
-                    contentPadding = PaddingValues(16.dp),
-                    enabled = true
-                ) {
+                Column {
+                    Button(
+                        onClick = {
+                            onTapContinue(viewModel.currentProductsState().totalAmount)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .imePadding()
+                            .then(Modifier.wrapContentHeight()),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
+                        shape = RoundedCornerShape(30.dp),
+                        contentPadding = PaddingValues(16.dp),
+                        enabled = true
+                    ) {
+                        Text(
+                            text = "Continuar",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }
+
                     Text(
-                        text = "Continuar",
+                        text = "Entrada: S/ 16.00",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+
+                    Text(
+                        text = "Adicionales: ${viewModel.currentProductsState().totalProducts}",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+
+                    Text(
+                        text = "Monto total: ${viewModel.currentProductsState().totalAmount}",
                         style = MaterialTheme.typography.titleSmall
                     )
                 }
@@ -105,8 +126,9 @@ fun CandyStoreScreen(
             }
 
             StoreUiState.Loading -> {
-                viewModel.getCandyStore()
-
+                LaunchedEffect(Unit) {
+                    viewModel.getCandyStore()
+                }
                 Column(
                     modifier = Modifier
                         .padding(it)
@@ -157,14 +179,6 @@ fun CandyStoreScreen(
                                 )
                                 Text(
                                     text = result.storeList[index].getFormattedPrice(),
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp),
-                                    fontSize = 15.sp,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontWeight = FontWeight(600)
-                                )
-                                Text(
-                                    text = result.storeList[index].count.toString(),
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp),
                                     fontSize = 15.sp,
