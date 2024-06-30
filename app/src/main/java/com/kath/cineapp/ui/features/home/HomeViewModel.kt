@@ -18,9 +18,6 @@ class HomeViewModel(
     private val _state: MutableStateFlow<HomeUiState> = MutableStateFlow(HomeUiState.Loading)
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
-    // Function to get the current state
-    fun currentState(): HomeUiState = _state.value
-
     // Function to update the state
     private fun updateState(newState: HomeUiState) {
         _state.value = newState

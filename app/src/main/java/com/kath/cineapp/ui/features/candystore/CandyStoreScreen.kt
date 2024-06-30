@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +38,9 @@ fun CandyStoreScreen(
     viewModel: CandyStoreViewModel = koinViewModel()
 ) {
     val state = viewModel.state.collectAsState()
-    viewModel.isLoggedUser()
+    LaunchedEffect(Unit) {
+        viewModel.isLoggedUser()
+    }
     Scaffold(
         containerColor = Color.White,
         topBar = {

@@ -3,6 +3,7 @@ package com.kath.cineapp.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,10 +46,22 @@ fun SetupNavGraph(
                 },
                 viewModel = loginViewModel,
                 goToStore = {
-                    navController.navigate(Screen.CandyStore.route)
+                    navController.navigate(Screen.CandyStore.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 goToMain = {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate(Screen.Home.route){
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 })
         }
 
