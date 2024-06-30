@@ -33,7 +33,7 @@ import com.kath.cineapp.R
 @Composable
 fun LoginScreen(onGoogleSignIn: () -> Unit, viewModel: LoginViewModel, goToStore: () -> Unit, goToMain: () -> Unit) {
     val state = viewModel.state.collectAsState()
-
+    viewModel.isLoggedUser()
     when(state.value){
         LoginUiState.None -> {
             Scaffold(

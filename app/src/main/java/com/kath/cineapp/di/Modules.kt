@@ -39,7 +39,6 @@ import com.kath.cineapp.ui.features.home.HomeViewModel
 import com.kath.cineapp.ui.features.candystore.CandyStoreViewModel
 import com.kath.cineapp.ui.features.login.LoginViewModel
 import com.kath.cineapp.ui.features.payment.PaymentViewModel
-import com.kath.cineapp.ui.main.MainViewModel
 import okhttp3.logging.HttpLoggingInterceptor
 
 import org.koin.android.ext.koin.androidContext
@@ -82,7 +81,6 @@ val appModule = module {
     viewModelOf(::CandyStoreViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::PaymentViewModel)
-    viewModelOf(::MainViewModel)
 }
 
 

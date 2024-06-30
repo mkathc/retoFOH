@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.kath.cineapp.ui.main.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -38,7 +37,7 @@ fun CandyStoreScreen(
     viewModel: CandyStoreViewModel = koinViewModel()
 ) {
     val state = viewModel.state.collectAsState()
-
+    viewModel.isLoggedUser()
     Scaffold(
         containerColor = Color.White,
         topBar = {

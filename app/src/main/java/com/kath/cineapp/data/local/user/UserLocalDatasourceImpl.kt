@@ -37,6 +37,11 @@ class UserLocalDatasourceImpl(
     }
 
     override suspend fun isLogged(): Result<Boolean> {
-        return Result.success(localPreferences.getBoolean(KEY_LOGGED_USER))
+        return try {
+            val result = localPreferences.getBoolean(KEY_LOGGED_USER)
+            Result.success(result)
+        }catch (e:Exception){
+            Result.failure(Throwable())
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.kath.cineapp.ui.features.payment
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -69,13 +68,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kath.cineapp.ui.main.MainViewModel
 import java.util.Locale
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel(), mainViewModel: MainViewModel = koinViewModel()) {
+fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel()) {
 
     val focusManager = LocalFocusManager.current
 
@@ -234,8 +232,8 @@ fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel(), mainViewModel: 
 
             PrimaryButton(
                 onClick = {
-                    mainViewModel.getUser()
-                    viewModel.sendPayment(mainViewModel.currentUser())
+                    viewModel.getUser()
+                    viewModel.sendPayment(viewModel.user.value)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

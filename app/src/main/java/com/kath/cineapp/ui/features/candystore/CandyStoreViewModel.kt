@@ -23,7 +23,8 @@ class CandyStoreViewModel(
     val state: StateFlow<StoreUiState> = _state.asStateFlow()
 
     private val _productList: MutableStateFlow<MutableList<CandyStoreModel>> = MutableStateFlow(
-        mutableListOf())
+        mutableListOf()
+    )
     val productList: StateFlow<MutableList<CandyStoreModel>> = _productList.asStateFlow()
 
     private val _isLogged: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -41,38 +42,41 @@ class CandyStoreViewModel(
         isLoggedUser()
     }
 
-     fun getCandyStore() {
+    fun getCandyStore() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = getCandyStoreUseCase()
-            if (result.isSuccess){
+            if (result.isSuccess) {
                 updateState(StoreUiState.Success(result.getOrNull() ?: mutableListOf()))
-            }else{
+            } else {
                 updateState(StoreUiState.Error)
             }
         }
     }
 
-    fun addProduct(product: CandyStoreModel){
+    fun addProduct(product: CandyStoreModel) {
         _productList.value.add(product)
     }
 
-    fun sendToPayment(){
+    fun sendToPayment() {
         var sum = 0.0
         productList.value.forEach {
             sum += it.getDoublePrice()
         }
-        Log.e("Prices", sum.toString() )
+        Log.e("Prices", sum.toString())
     }
 
-    private fun isLoggedUser(){
-        viewModelScope.launch(Dispatchers.IO){
+    fun isLoggedUser() {
+        viewModelScope.launch(Dispatchers.IO) {
             getUserIsLoggedUseCase().onSuccess {
                 _isLogged.value = it
-                updateState(StoreUiState.Loading)
+                if (it) {
+                    updateState(StoreUiState.Loading)
+                } else {
+                    updateState(StoreUiState.IsNotLogged)
+                }
             }.onFailure {
                 _isLogged.value = false
                 updateState(StoreUiState.IsNotLogged)
-
             }
         }
     }
