@@ -25,7 +25,8 @@ class GetCandyStoreUseCase(
             name = name,
             description = description,
             price = price,
-            image = image
+            image = image,
+            count = 0
         )
     }
 }

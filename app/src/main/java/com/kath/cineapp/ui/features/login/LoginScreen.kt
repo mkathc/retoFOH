@@ -1,6 +1,5 @@
 package com.kath.cineapp.ui.features.login
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kath.cineapp.R
+import com.kath.cineapp.ui.features.login.model.LoginViewModel
 
 @Composable
 fun LoginScreen(

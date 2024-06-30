@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import com.kath.cineapp.ui.features.home.HomeViewModel
 import com.kath.cineapp.ui.features.candystore.CandyStoreViewModel
-import com.kath.cineapp.ui.features.login.LoginViewModel
+import com.kath.cineapp.ui.features.login.model.LoginViewModel
 import com.kath.cineapp.ui.features.payment.PaymentViewModel
 import okhttp3.logging.HttpLoggingInterceptor
 

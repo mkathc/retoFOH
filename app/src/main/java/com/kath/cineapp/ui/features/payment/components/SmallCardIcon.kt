@@ -1,4 +1,4 @@
-package com.kath.cineapp.ui.features.payment
+package com.kath.cineapp.ui.features.payment.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,7 +45,7 @@ fun SmallCardIcon() {
                     .wrapContentWidth()
             ) {
 
-                Column() {
+                Column {
                     Text(
                         text = stringResource(R.string.payment_card), style = TextStyle(
                             fontSize = 2.sp,

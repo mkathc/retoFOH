@@ -55,14 +55,25 @@ class CandyStoreViewModel(
 
     fun addProduct(product: CandyStoreModel) {
         _productList.value.add(product)
+        val stateSuccess = state.value as StoreUiState.Success
+        val list = stateSuccess.storeList
+        list.map {
+            if (it == product) {
+                it.copy(count = it.count++)
+            }else{
+                it
+            }
+        }
+        updateState(StoreUiState.Success(list))
     }
 
-    fun sendToPayment() {
+    fun sendToPayment():Double {
         var sum = 0.0
         productList.value.forEach {
             sum += it.getDoublePrice()
         }
         Log.e("Prices", sum.toString())
+        return sum
     }
 
     fun isLoggedUser() {

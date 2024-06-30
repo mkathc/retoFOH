@@ -24,7 +24,7 @@ class PaymentRepositoryImpl(
 
     private fun PaymentResponse.parseToResult(): PaymentResult {
         return PaymentResult(
-            operationDate = "transactionResponse?.operationDate.toString()"
+            operationDate = transactionResponse?.operationDate.toString()
         )
     }
 }

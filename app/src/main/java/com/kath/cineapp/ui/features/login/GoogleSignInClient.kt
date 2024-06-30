@@ -12,6 +12,7 @@ import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.kath.cineapp.ui.features.login.model.UserModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

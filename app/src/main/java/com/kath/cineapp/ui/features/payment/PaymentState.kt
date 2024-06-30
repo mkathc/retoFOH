@@ -7,12 +7,12 @@ data class PaymentState(
 )
 
 data class CardFormFields(
-    val cardNumber: UiField = UiField(""),
-    val cardHolder: UiField = UiField(""),
+    val cardNumber: UiField = UiField("4907840000000005"),
+    val cardHolder: UiField = UiField("Kath"),
     val documentType: UiField = UiField("DNI"),
-    val documentNumber: UiField = UiField(""),
-    val cvvCode: UiField = UiField(""),
-    val expirationDate: UiField = UiField(""),
+    val documentNumber: UiField = UiField("47372313"),
+    val cvvCode: UiField = UiField("777"),
+    val expirationDate: UiField = UiField("2025/06"),
     val expirationDateTimestamp: Long? = null,
-    val address: UiField = UiField("")
+    val address: UiField = UiField("La Unidad 7670")
 )

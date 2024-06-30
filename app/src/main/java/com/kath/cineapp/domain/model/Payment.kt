@@ -1,5 +1,7 @@
 package com.kath.cineapp.domain.model
 
+import java.util.UUID
+
 data class Payment(
     val cardNumber: String,
     val cardHolder: String,
@@ -10,4 +12,11 @@ data class Payment(
     val expirationDateTimestamp: Long? = null,
     val email: String,
     val address: String,
-)
+    val value: Double
+) {
+    fun randomReference(): String {
+        val myUuid = UUID.randomUUID()
+        val myUuidAsString = myUuid.toString()
+        return cardHolder + myUuidAsString
+    }
+}

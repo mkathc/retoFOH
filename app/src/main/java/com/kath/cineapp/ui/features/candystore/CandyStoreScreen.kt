@@ -1,16 +1,21 @@
 package com.kath.cineapp.ui.features.candystore
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,7 +39,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CandyStoreScreen(
-    onTapContinue: () -> Unit,
+    onTapContinue: (Double) -> Unit,
     viewModel: CandyStoreViewModel = koinViewModel()
 ) {
     val state = viewModel.state.collectAsState()
@@ -51,7 +56,7 @@ fun CandyStoreScreen(
                         .fillMaxWidth()
                         .padding(16.dp),
                     textAlign = TextAlign.Center,
-                    fontSize = 35.sp,
+                    fontSize = 25.sp,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
@@ -60,15 +65,23 @@ fun CandyStoreScreen(
             if (state.value is StoreUiState.Success) {
                 Button(
                     onClick = {
-                        viewModel.sendToPayment()
-                        onTapContinue()
-                    }, modifier = Modifier
+                        onTapContinue(viewModel.sendToPayment())
+                    },
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .imePadding()
+                        .then(Modifier.wrapContentHeight()),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                    shape = RoundedCornerShape(30.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    enabled = true
                 ) {
                     Text(
                         text = "Continuar",
-                        fontSize = 20.sp,
+                        style = MaterialTheme.typography.titleSmall
                     )
                 }
             }
@@ -112,6 +125,8 @@ fun CandyStoreScreen(
 
             is StoreUiState.Success -> {
                 val result = state.value as StoreUiState.Success
+                Log.e("Debug", "StoreUiState Success")
+
                 Column(
                     modifier = Modifier
                         .padding(it)
@@ -142,6 +157,14 @@ fun CandyStoreScreen(
                                 )
                                 Text(
                                     text = result.storeList[index].getFormattedPrice(),
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp),
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontWeight = FontWeight(600)
+                                )
+                                Text(
+                                    text = result.storeList[index].count.toString(),
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp),
                                     fontSize = 15.sp,

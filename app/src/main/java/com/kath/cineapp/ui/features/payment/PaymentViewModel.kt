@@ -7,7 +7,8 @@ import com.kath.cineapp.domain.model.Complete
 import com.kath.cineapp.domain.usecase.GetUserUseCase
 import com.kath.cineapp.domain.usecase.SendCompleteUseCase
 import com.kath.cineapp.domain.usecase.SendPaymentUseCase
-import com.kath.cineapp.ui.features.login.UserModel
+import com.kath.cineapp.ui.features.login.model.UserModel
+import com.kath.cineapp.ui.features.payment.model.PaymentModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -154,7 +155,7 @@ class PaymentViewModel(
         }
     }
 
-    fun sendPayment(user: UserModel) {
+    fun sendPayment(user: UserModel, value:Double) {
 
         val model = PaymentModel(
             cardNumber = currentState().formFields.cardNumber.value,
@@ -164,7 +165,8 @@ class PaymentViewModel(
             documentType = currentState().formFields.documentType.value,
             cvvCode = currentState().formFields.cvvCode.value,
             email = user.email,
-            address = currentState().formFields.address.value
+            address = currentState().formFields.address.value,
+            value = value
         )
 
         viewModelScope.launch(Dispatchers.IO) {

@@ -1,4 +1,4 @@
-package com.kath.cineapp.ui.features.payment
+package com.kath.cineapp.ui.features.payment.model
 
 data class PaymentModel(
     val cardNumber: String,
@@ -10,4 +10,5 @@ data class PaymentModel(
     val expirationDateTimestamp: Long? = null,
     val email: String,
     val address: String,
+    val value: Double
 )

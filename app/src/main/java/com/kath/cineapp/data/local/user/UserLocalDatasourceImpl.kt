@@ -28,7 +28,7 @@ class UserLocalDatasourceImpl(
     override suspend fun saveUser(user: UserEntity): Result<Boolean> {
         try {
             localPreferences.setString(KEY_NAME_USER, user.name)
-            localPreferences.setString(KEY_MAIL_USER, user.name)
+            localPreferences.setString(KEY_MAIL_USER, user.email)
             localPreferences.setBoolean(KEY_LOGGED_USER, true)
             return Result.success(true)
         } catch (e: Exception) {

@@ -18,7 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,107 +30,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.kath.cineapp.ui.features.candystore.StoreUiState
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(onTapMovie: () -> Unit, viewModel: HomeViewModel = koinViewModel()) {
-    val state = viewModel.state.collectAsState()
-    Scaffold(
-        containerColor = Color.White,
-        topBar = {
-            Text(
-                text = "Elige tu película favorita",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                textAlign = TextAlign.Center,
-                fontSize = 30.sp,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-    ) {
-        when (state.value) {
-            HomeUiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Error al obtener los datos",
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
+fun HomeScreen(onTapMovie: () -> Unit, viewModel: HomeViewModel) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-            HomeUiState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .width(64.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                }
-            }
-
-            is HomeUiState.Success -> {
-                val result = (state.value as HomeUiState.Success)
-                Log.e("Debug", "Success")
-                Column(
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxSize()
-                ) {
-                    val pagerState = rememberPagerState(pageCount = {
-                        result.premieresList.size
-                    })
-
-                    HorizontalPager(
-                        modifier = Modifier
-                            .fillMaxSize(), state = pagerState
-                    ) { index ->
-                        Box(modifier = Modifier.clickable {
-                            Log.e("Debug", "onTapMovie")
-                            onTapMovie()
-                        }) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(result.premieresList[index].image)
-                                    .build(),
-                                contentDescription = "Image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                            )
-
-                            Text(
-                                text = result.premieresList[index].description,
-                                modifier = Modifier
-                                    .padding(25.dp)
-                                    .align(Alignment.BottomStart),
-                                color = Color.White,
-                                fontSize = 20.sp
-                            )
-                        }
-
-                    }
-                }
-            }
-        }
+    LaunchedEffect(Unit) {
+        viewModel.getPremieres()
     }
+
+    HomeScreenContent(onTapMovie = onTapMovie, state = state)
 }

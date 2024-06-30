@@ -4,7 +4,8 @@ data class CandyStoreModel(
     val name: String,
     val description: String,
     val price: String,
-    val image: String
+    val image: String,
+    var count: Int
 ){
     fun getFormattedPrice(): String{
         return "S/. $price"

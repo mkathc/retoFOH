@@ -2,12 +2,9 @@ package com.kath.cineapp.domain.usecase
 
 import com.kath.cineapp.domain.model.Payment
 import com.kath.cineapp.domain.model.PaymentResult
-import com.kath.cineapp.domain.model.User
 import com.kath.cineapp.domain.repository.PaymentRepository
-import com.kath.cineapp.domain.repository.UserRepository
-import com.kath.cineapp.ui.features.login.UserModel
-import com.kath.cineapp.ui.features.payment.PaymentModel
-import com.kath.cineapp.ui.features.payment.PaymentResultModel
+import com.kath.cineapp.ui.features.payment.model.PaymentModel
+import com.kath.cineapp.ui.features.payment.model.PaymentResultModel
 
 class SendPaymentUseCase(
     private val paymentRepository: PaymentRepository,
@@ -33,7 +30,8 @@ class SendPaymentUseCase(
             expirationDate,
             expirationDateTimestamp,
             email,
-            address
+            address,
+            value
         )
     }
 

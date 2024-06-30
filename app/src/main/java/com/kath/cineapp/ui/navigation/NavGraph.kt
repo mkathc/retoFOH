@@ -5,15 +5,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.kath.cineapp.ui.features.candystore.CandyStoreScreen
 import com.kath.cineapp.ui.features.home.HomeScreen
 import com.kath.cineapp.ui.features.login.GoogleSignInClient
 import com.kath.cineapp.ui.features.login.LoginScreen
-import com.kath.cineapp.ui.features.login.LoginViewModel
+import com.kath.cineapp.ui.features.login.model.LoginViewModel
 import com.kath.cineapp.ui.features.payment.PaymentScreen
-import com.kath.cineapp.ui.features.payment.PaymentState
 import kotlinx.coroutines.CoroutineScope
 import org.koin.androidx.compose.koinViewModel
 
@@ -32,8 +33,14 @@ fun SetupNavGraph(
     ) {
         composable(route = Screen.Home.route) {
             HomeScreen(onTapMovie = {
-                navController.navigate(Screen.Login.route)
-            })
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }, viewModel = koinViewModel())
         }
 
         composable(route = Screen.Login.route) {
@@ -55,7 +62,7 @@ fun SetupNavGraph(
                     }
                 },
                 goToMain = {
-                    navController.navigate(Screen.Home.route){
+                    navController.navigate(Screen.Home.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -67,12 +74,25 @@ fun SetupNavGraph(
 
         composable(route = Screen.CandyStore.route) {
             CandyStoreScreen(onTapContinue = {
-                navController.navigate(Screen.Payment.route)
+                navController.navigate(
+                    Screen.Payment.route.replace(
+                        oldValue = "{total}",
+                        newValue = it.toString()
+                    )
+                )
             })
         }
 
-        composable(route = Screen.Payment.route) {
-            PaymentScreen()
+        composable(
+            route = Screen.Payment.route,
+            arguments = listOf(
+                navArgument("total") {
+                    defaultValue = 0.0
+                    type = NavType.FloatType
+                }
+            )
+        ) { backStackEntry ->
+            PaymentScreen(total = backStackEntry.arguments?.getFloat("total")?.toDouble() ?: 0.0)
         }
     }
 }

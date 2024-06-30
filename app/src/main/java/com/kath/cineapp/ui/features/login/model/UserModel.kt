@@ -1,4 +1,4 @@
-package com.kath.cineapp.ui.features.login
+package com.kath.cineapp.ui.features.login.model
 
 data class UserModel(
     val name: String,

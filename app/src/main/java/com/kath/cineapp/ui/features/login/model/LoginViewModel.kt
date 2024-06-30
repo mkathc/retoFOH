@@ -1,10 +1,11 @@
-package com.kath.cineapp.ui.features.login
+package com.kath.cineapp.ui.features.login.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kath.cineapp.domain.usecase.GetUserIsLoggedUseCase
 import com.kath.cineapp.domain.usecase.GetUserUseCase
 import com.kath.cineapp.domain.usecase.SaveUserUseCase
+import com.kath.cineapp.ui.features.login.LoginUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -2,7 +2,7 @@ package com.kath.cineapp.domain.usecase
 
 import com.kath.cineapp.domain.model.User
 import com.kath.cineapp.domain.repository.UserRepository
-import com.kath.cineapp.ui.features.login.UserModel
+import com.kath.cineapp.ui.features.login.model.UserModel
 
 class SaveUserUseCase(
     private val userRepository: UserRepository

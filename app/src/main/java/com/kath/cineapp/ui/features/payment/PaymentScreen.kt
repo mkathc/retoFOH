@@ -8,7 +8,6 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,8 +25,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -37,10 +34,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -55,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -65,24 +59,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kath.cineapp.ui.features.payment.components.CardUiHelpers
+import com.kath.cineapp.ui.features.payment.components.SmallCardIcon
+import com.kath.cineapp.ui.features.payment.components.getFormattedDate
 import java.util.Locale
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel()) {
+fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel(), total: Double) {
 
     val focusManager = LocalFocusManager.current
 
     val state = viewModel.state.collectAsState()
 
+    viewModel.getUser()
+
     Scaffold(
         topBar = {
-            //SecondaryToolBar(onBack = onBack, title = UiText.StringResource(R.string.add_a_card))
-        },
+            Text(
+                text = "Completa el pago",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     ) { pv ->
 
         Column(
@@ -136,8 +144,7 @@ fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel()) {
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = {
                                     viewModel.updateState(viewModel.state.value.copy(showDatePicker = true))
-                                },
-                                error = state.value.formFields.expirationDate.error
+                                }
                             )
                         }
 
@@ -230,16 +237,28 @@ fun PaymentScreen(viewModel: PaymentViewModel = koinViewModel()) {
 
             Spacer(Modifier.height(16.dp))
 
-            PrimaryButton(
+            Button(
                 onClick = {
-                    viewModel.getUser()
-                    viewModel.sendPayment(viewModel.user.value)
+                    viewModel.updateState(viewModel.currentState().copy(isLoading = true))
+                    viewModel.sendPayment(viewModel.user.value, total)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .imePadding(),
-                text = "Pagar"
-            )
+                    .imePadding()
+                    .then(Modifier.wrapContentHeight()),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+                shape = RoundedCornerShape(30.dp),
+                contentPadding = PaddingValues(16.dp),
+                enabled = true
+            ) {
+                Text(
+                    text = "Pagar",
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
         }
 
 
@@ -373,8 +392,6 @@ fun DotsProgressIndicator(
             )
         }
     }
-
-
 }
 
 
@@ -458,11 +475,24 @@ fun CardNumberField(
                 ) {
                     SmallCardIcon()
                 }
-            }
+            },
+            textStyle = TextStyle(
+                fontSize = 14.sp,
+                color = Color.Gray,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 20.sp
+            ),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = Color(0xFFCFCFD3),
+                errorContainerColor = Color.Transparent,
+            ),
+            shape = RoundedCornerShape(4.dp)
         )
     }
 }
-
 
 @Composable
 fun ReadonlyTextField(
@@ -470,19 +500,31 @@ fun ReadonlyTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    error: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     Box(modifier = modifier) {
-        PrimaryTextField(
+
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = value,
             onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
             visualTransformation = visualTransformation,
-            error = error
+            textStyle = TextStyle(
+                fontSize = 14.sp,
+                color = Color.Gray,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 20.sp
+            ),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = Color(0xFFCFCFD3),
+                errorContainerColor = Color.Transparent,
+            ),
+            shape = RoundedCornerShape(4.dp)
         )
 
-        // TODO ripple
         Box(
             modifier = Modifier
                 .matchParentSize()
@@ -492,95 +534,6 @@ fun ReadonlyTextField(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PrimaryTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = TextStyle(
-        fontSize = 14.sp,
-        color = Color.LightGray,
-        fontWeight = FontWeight.Normal,
-        lineHeight = 20.sp
-    ),
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    error: String? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = Int.MAX_VALUE,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: TextFieldColors = TextFieldDefaults.colors(
-        focusedContainerColor = Color.Transparent,
-        unfocusedContainerColor = Color.Transparent,
-        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-        unfocusedIndicatorColor = Color(0xFFCFCFD3),
-        errorContainerColor = Color.Transparent,
-    ),
-    shape: Shape = RoundedCornerShape(4.dp),
-) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        interactionSource = interactionSource,
-        enabled = enabled,
-        singleLine = singleLine,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        visualTransformation = visualTransformation,
-        readOnly = readOnly,
-        maxLines = maxLines,
-        textStyle = textStyle,
-    ) { innerTextField ->
-        OutlinedTextFieldDefaults.DecorationBox(
-            value = value,
-            visualTransformation = visualTransformation,
-            innerTextField = innerTextField,
-            singleLine = singleLine,
-            enabled = enabled,
-            interactionSource = interactionSource,
-            contentPadding = PaddingValues(
-                vertical = 14.dp, horizontal = 16.dp
-            ),
-            placeholder = placeholder,
-            colors = colors,
-            isError = error != null,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon,
-            supportingText = {
-                if (error != null) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = error,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                } else supportingText?.invoke()
-            },
-            label = label,
-            container = {
-                OutlinedTextFieldDefaults.ContainerBox(
-                    enabled,
-                    error != null,
-                    interactionSource,
-                    colors,
-                    shape
-                )
-            }
-        )
-    }
-}
-
-
-// TODO refactoring
 @Composable
 private fun FormField(
     title: String,
@@ -604,22 +557,35 @@ private fun FormField(
 
         Spacer(Modifier.height(16.dp))
 
-        PrimaryTextField(
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = if (capitalize) {
                 uiField.value.toUpperCase(Locale.ENGLISH)
             } else {
                 uiField.value
             },
-            onValueChange = {
-                onValueChange.invoke(it)
+            onValueChange = { newValue ->
+                onValueChange.invoke(newValue)
             },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 1,
             singleLine = true,
+            maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 keyboardType = type,
             ),
-            error = uiField.error
+            textStyle = TextStyle(
+                fontSize = 14.sp,
+                color = Color.Gray,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 20.sp
+            ),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = Color(0xFFCFCFD3),
+                errorContainerColor = Color.Transparent,
+            ),
+            shape = RoundedCornerShape(4.dp)
         )
     }
 }
