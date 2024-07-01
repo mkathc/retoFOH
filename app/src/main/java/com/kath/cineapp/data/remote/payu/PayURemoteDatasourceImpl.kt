@@ -71,7 +71,6 @@ class PayURemoteDatasourceImpl(
         val md = MessageDigest.getInstance("MD5")
         val result = BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
         Log.e("Debug", "input $input")
-        Log.e("Debug", "result $result")
         return result
     }
 

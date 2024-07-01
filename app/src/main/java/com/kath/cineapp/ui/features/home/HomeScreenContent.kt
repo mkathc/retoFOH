@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kath.cineapp.ui.features.candystore.StoreUiState
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -97,9 +98,18 @@ fun HomeScreenContent(onTapMovie: () -> Unit, state: HomeUiState) {
                         .padding(it)
                         .fillMaxSize()
                 ) {
+
                     val pagerState = rememberPagerState(pageCount = {
                         result.premieresList.size
                     })
+
+                    LaunchedEffect(key1 = pagerState) {
+                        while (true) {
+                            delay(3500)
+                            val next = (pagerState.currentPage + 1) % result.premieresList.size
+                            pagerState.animateScrollToPage(next)
+                        }
+                    }
 
                     HorizontalPager(
                         modifier = Modifier

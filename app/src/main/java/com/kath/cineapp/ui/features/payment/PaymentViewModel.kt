@@ -1,6 +1,5 @@
 package com.kath.cineapp.ui.features.payment
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kath.cineapp.domain.model.Complete
@@ -21,6 +20,7 @@ class PaymentViewModel(
     private val sendPaymentUseCase: SendPaymentUseCase,
     private val sendCompleteUseCase: SendCompleteUseCase,
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(PaymentState())
     val state = _state.asStateFlow()
 
@@ -28,113 +28,18 @@ class PaymentViewModel(
         _state.value = paymentState
     }
 
+    private val _resultState: MutableStateFlow<ResultUiState> = MutableStateFlow(ResultUiState.None)
+    val resultState: StateFlow<ResultUiState> get() = _resultState
+
+
+    private fun updateResultState(resultUiState: ResultUiState) {
+        _resultState.value = resultUiState
+    }
+
     private val _user: MutableStateFlow<UserModel> = MutableStateFlow(UserModel("", ""))
     val user: StateFlow<UserModel> = _user.asStateFlow()
 
     fun currentState() = _state.value
-
-    /*   fun emitIntent(intent: AddCardIntent) {
-           val currentState = _state.value
-
-           when (intent) {
-               is AddCardIntent.EnterScreen -> {
-                   if (BuildConfig.DEBUG) {
-                       reduceInitialMockState()
-                   }
-               }
-
-               is AddCardIntent.StringFieldChanged -> {
-                   when (intent.fieldType) {
-                       AddCardFieldType.CARD_NUMBER -> reduceFields(currentState.formFields.copy(cardNumber = UiField(intent.fieldValue)))
-                       AddCardFieldType.CARD_HOLDER -> reduceFields(currentState.formFields.copy(cardHolder = UiField(intent.fieldValue)))
-                       AddCardFieldType.ADDRESS_LINE_1 -> reduceFields(currentState.formFields.copy(addressFirstLine = UiField(intent.fieldValue)))
-                       AddCardFieldType.ADDRESS_LINE_2 -> reduceFields(currentState.formFields.copy(addressSecondLine = UiField(intent.fieldValue)))
-                       AddCardFieldType.CVV_CODE -> reduceFields(currentState.formFields.copy(cvvCode = UiField(intent.fieldValue)))
-                       AddCardFieldType.CARD_EXPIRATION_DATE -> { *//* handled in other intent *//*
-                    }
-                }
-            }
-
-            is AddCardIntent.ToggleDatePicker -> {
-                _state.update { curr ->
-                    curr.copy(showDatePicker = intent.isShown)
-                }
-            }
-
-            is AddCardIntent.ExpirationPickerSet -> {
-                val formatted = if (intent.date == null) {
-                    "-"
-                } else {
-                    intent.date.getFormattedDate("dd MMM yyyy")
-                }
-
-                reduceFields(
-                    currentState.formFields.copy(
-                        expirationDate = UiField(formatted), expirationDateTimestamp = intent.date
-                    )
-                )
-            }
-
-            is AddCardIntent.SaveCard -> {
-                _state.update { curr ->
-                    curr.copy(
-                        isLoading = true
-                    )
-                }
-
-                viewModelScope.launch {
-                    val formValid = reduceValidationWithResult()
-                    if (!formValid) {
-                        _state.update { curr ->
-                            curr.copy(
-                                isLoading = false,
-                                cardSavedEvent = triggered(
-                                    OperationResult.Failure(error = AppError(ErrorType.GENERIC_VALIDATION_ERROR))
-                                )
-                            )
-                        }
-                    } else {
-                        val res = OperationResult.runWrapped {
-                            addCardUseCase.execute(payload = AddCardPayload(
-                                cardNumber = currentState.formFields.cardNumber.value,
-                                cardHolder = currentState.formFields.cardHolder.value,
-                                expirationDate = currentState.formFields.expirationDateTimestamp!!,
-                                addressFirstLine = currentState.formFields.addressFirstLine.value,
-                                addressSecondLine = currentState.formFields.addressSecondLine.value,
-                                cvvCode =   currentState.formFields.cvvCode.value
-                            )
-                            )
-                        }
-
-                        when (res) {
-                            is OperationResult.Success -> {
-                                _state.update { curr ->
-                                    curr.copy(
-                                        isLoading = false, cardSavedEvent = triggered(res)
-                                    )
-                                }
-                            }
-                            is OperationResult.Failure -> {
-                                _state.update { curr ->
-                                    curr.copy(
-                                        isLoading = false, cardSavedEvent = triggered(res)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            is AddCardIntent.ConsumeResultEvent -> {
-                _state.update { curr ->
-                    curr.copy(
-                        cardSavedEvent = consumed()
-                    )
-                }
-            }
-        }
-    }*/
 
     fun updateFields(
         cardFields: CardFormFields,
@@ -155,7 +60,7 @@ class PaymentViewModel(
         }
     }
 
-    fun sendPayment(user: UserModel, value:Double) {
+    fun sendPayment(user: UserModel, value: Double) {
 
         val model = PaymentModel(
             cardNumber = currentState().formFields.cardNumber.value,
@@ -171,7 +76,6 @@ class PaymentViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             sendPaymentUseCase(model).onSuccess {
-                Log.e("sendPaymentUseCase", "onSuccess")
                 sendCompleteUseCase.invoke(
                     Complete(
                         name = user.name,
@@ -180,12 +84,12 @@ class PaymentViewModel(
                         operationDate = it.operationDate
                     )
                 ).onSuccess {
-                    Log.e("sendCompleteUseCase", "onSuccess")
+                    updateResultState(ResultUiState.Success)
                 }.onFailure {
-                    Log.e("sendCompleteUseCase", "onFailure")
+                    updateResultState(ResultUiState.Error)
                 }
             }.onFailure {
-                Log.e("sendPaymentUseCase", "onFailure")
+                updateResultState(ResultUiState.Error)
             }
         }
     }

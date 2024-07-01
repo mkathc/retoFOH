@@ -45,3 +45,8 @@ fun String.splitStringWithDivider(
 
     return formattedStringBuilder.toString()
 }
+
+data class UiField(
+    val value: String,
+    val error: String? = null,
+)

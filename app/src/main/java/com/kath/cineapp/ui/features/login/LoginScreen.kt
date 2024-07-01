@@ -3,15 +3,22 @@ package com.kath.cineapp.ui.features.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,17 +59,55 @@ fun LoginScreen(
                     ) {
                         Button(
                             onClick = onGoogleSignIn,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier
+                                .fillMaxWidth().padding(20.dp)
+                                .wrapContentHeight().align(Alignment.CenterHorizontally),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                            ),
+                            shape = RoundedCornerShape(30.dp),
+                            contentPadding = PaddingValues(16.dp),
+                            enabled = true
                         ) {
-                            Text(text = "Log in con Google")
+                            Row(
+                                modifier = Modifier.padding(5.dp),
+                            ) {
+                                Icon(
+                                    contentDescription = "google icon",
+                                    painter = painterResource(id = R.drawable.google),
+                                    modifier = Modifier.height(25.dp)
+                                )
+                                Text(
+                                    text = "Log in con Google",
+                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                )
+                            }
                         }
+
                         Text(text = "o", modifier = Modifier.align(Alignment.CenterHorizontally))
 
                         Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            onClick = onGoogleSignIn,
+                            modifier = Modifier
+                                .fillMaxWidth().padding(20.dp)
+                                .wrapContentHeight().align(Alignment.CenterHorizontally),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                            ),
+                            shape = RoundedCornerShape(30.dp),
+                            contentPadding = PaddingValues(16.dp),
+                            enabled = true
                         ) {
-                            Text(text = "Invitado")
+                            Row(
+                                modifier = Modifier.padding(5.dp),
+                            ) {
+                                Text(
+                                    text = "Invitado",
+                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -78,6 +123,7 @@ fun LoginScreen(
                         contentDescription = "",
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
+                            .padding(horizontal = 16.dp)
                             .clip(
                                 RoundedCornerShape(16.dp)
                             )

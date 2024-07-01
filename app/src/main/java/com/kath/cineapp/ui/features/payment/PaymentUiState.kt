@@ -1,5 +1,7 @@
 package com.kath.cineapp.ui.features.payment
 
+import com.kath.cineapp.ui.features.payment.components.UiField
+
 data class PaymentState(
     val formFields: CardFormFields = CardFormFields(),
     val isLoading: Boolean = false,
