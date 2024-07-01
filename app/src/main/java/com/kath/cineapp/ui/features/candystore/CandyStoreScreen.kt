@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -59,27 +61,57 @@ fun CandyStoreScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Resumen",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight(600)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(
-                        text = "Entrada: S/. 16.00",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Entrada:",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            text = " S/. 16.00",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
-                        text = "Adicionales: S/. ${viewModel.currentProductsState().totalProducts}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Adicionales:",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            text = "S/. ${viewModel.currentProductsState().totalProducts}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Monto total:",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = "S/. ${viewModel.currentProductsState().totalAmount}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
 
-                    Text(
-                        text = "Monto total: S/. ${viewModel.currentProductsState().totalAmount}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
@@ -145,7 +177,6 @@ fun CandyStoreScreen(
 
             is StoreUiState.Success -> {
                 val result = state.value as StoreUiState.Success
-                Log.e("Debug", "StoreUiState Success")
 
                 Column(
                     modifier = Modifier

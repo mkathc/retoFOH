@@ -76,6 +76,29 @@ fun PaymentScreen(
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
+        },
+        bottomBar = {
+            Button(
+                onClick = {
+                    viewModel.updateState(viewModel.currentState().copy(isLoading = true))
+                    viewModel.sendPayment(viewModel.user.value, total)
+                },
+                modifier = Modifier
+                    .fillMaxWidth().padding(horizontal = 16.dp)
+                    .then(Modifier.wrapContentHeight()),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+                shape = RoundedCornerShape(30.dp),
+                contentPadding = PaddingValues(16.dp),
+                enabled = true
+            ) {
+                Text(
+                    text = "Pagar",
+                    style = MaterialTheme.typography.titleSmall
+                )
+            }
         }
     ) { pv ->
 
@@ -220,31 +243,6 @@ fun PaymentScreen(
                     )
                 }
             }
-
-            Spacer(Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    viewModel.updateState(viewModel.currentState().copy(isLoading = true))
-                    viewModel.sendPayment(viewModel.user.value, total)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .imePadding()
-                    .then(Modifier.wrapContentHeight()),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-                shape = RoundedCornerShape(30.dp),
-                contentPadding = PaddingValues(16.dp),
-                enabled = true
-            ) {
-                Text(
-                    text = "Pagar",
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
         }
     }
 
@@ -255,7 +253,7 @@ fun PaymentScreen(
     if (state.value.showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { selectedMills ->
-                val formatted = selectedMills?.getFormattedDate("dd MMM yyyy") ?: "-"
+                val formatted = selectedMills?.getFormattedDate("yyyy/MM") ?: "-"
                 val formField = viewModel.currentState().formFields.copy(
                     expirationDate = UiField(formatted), expirationDateTimestamp = selectedMills
                 )

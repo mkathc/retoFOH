@@ -50,7 +50,6 @@ fun LoginScreen(
     when (state.value) {
         LoginUiState.None -> {
             Scaffold(
-                containerColor = Color.Black,
                 bottomBar = {
                     Column(
                         modifier = Modifier
@@ -88,7 +87,9 @@ fun LoginScreen(
                         Text(text = "o", modifier = Modifier.align(Alignment.CenterHorizontally))
 
                         Button(
-                            onClick = onGoogleSignIn,
+                            onClick = {
+                                //TODO
+                            },
                             modifier = Modifier
                                 .fillMaxWidth().padding(20.dp)
                                 .wrapContentHeight().align(Alignment.CenterHorizontally),
